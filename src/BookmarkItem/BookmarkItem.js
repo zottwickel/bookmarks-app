@@ -1,8 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Rating from '../Rating/Rating';
 import './BookmarkItem.css';
 
 export default function BookmarkItem(props) {
+  const bookmarkPath = `/bookmark/${props.id}`
   return (
     <li className='BookmarkItem'>
       <div className='BookmarkItem__row'>
@@ -25,6 +27,11 @@ export default function BookmarkItem(props) {
           onClick={() => props.onClickDelete(props.id)}
         >
           Delete
+        </button>
+        <button
+          className='BookmarkItem__description'
+        >
+          <Link to={bookmarkPath}>Update</Link>
         </button>
       </div>
     </li>

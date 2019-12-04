@@ -1,4 +1,6 @@
 import React, { Component } from  'react';
+import { Redirect } from 'react-router-dom';
+import BookmarksContext from '../BookmarksContext';
 import config from '../config'
 import './AddBookmark.css';
 
@@ -7,13 +9,12 @@ const Required = () => (
 )
 
 class AddBookmark extends Component {
-  static defaultProps = {
-    onAddBookmark: () => {}
-  };
-
   state = {
     error: null,
+    redirect: false,
   };
+
+  static contextType = BookmarksContext;
 
   handleSubmit = e => {
     e.preventDefault()
@@ -44,21 +45,26 @@ class AddBookmark extends Component {
         }
         return res.json()
       })
-      .then(data => {
-        title.value = ''
-        url.value = ''
-        description.value = ''
-        rating.value = ''
-        this.props.onAddBookmark(data)
-      })
+      .then(this.props.onAddBookmark)
+      .then(
+        this.setState({
+          redirect: true
+        })
+      )
       .catch(error => {
         this.setState({ error })
       })
   }
 
   render() {
+    function onClickCancel(e) {
+      e.preventDefault()
+      this.setState({ redirect: true })
+    }
+    if (this.state.redirect === true) {
+      return <Redirect to='/' />
+    }
     const { error } = this.state
-    const { onClickCancel } = this.props
     return (
       <section className='AddBookmark'>
         <h2>Create a bookmark</h2>
@@ -123,7 +129,7 @@ class AddBookmark extends Component {
             />
           </div>
           <div className='AddBookmark__buttons'>
-            <button type='button' onClick={onClickCancel}>
+            <button type='button' onClick={e => onClickCancel(e)}>
               Cancel
             </button>
             {' '}
